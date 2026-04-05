@@ -1,0 +1,34 @@
+# Applied ONCE manually with:   kubectl apply -f argocd-app.yaml
+# After that, ArgoCD manages everything.
+
+# ── CHANGE REQUIRED ──────────────────────────────────────────────────────────
+# 1. repoURL   → your repo's HTTPS clone URL
+#               Example: https://github.com/janedoe/demo-app
+# 2. That's it. Everything else is fine as-is for a standard ArgoCD install.
+#
+# PRE-REQUISITE: the target namespace must exist before ArgoCD can deploy.
+#   kubectl create namespace demo
+# ─────────────────────────────────────────────────────────────────────────────
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app
+  namespace: argocd           # ArgoCD's own namespace — do not change
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/blerinabombaj/demo-app
+    targetRevision: HEAD
+    path: chart               # folder inside the repo that contains Chart.yaml
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc   # in-cluster — correct for most setups
+    namespace: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true          # this is what makes Exercise 3 work:
+                              # ArgoCD auto-reverts any out-of-band cluster change

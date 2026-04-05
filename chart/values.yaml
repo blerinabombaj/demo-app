@@ -1,0 +1,18 @@
+# ── CHANGE REQUIRED ──────────────────────────────────────────────────────────
+# Replace YOUR_GITHUB_USERNAME with your actual GitHub username (lowercase).
+# This must match the owner used in the pipeline IMAGE env var.
+# Example: image.repository: ghcr.io/janedoe/demo-app
+# ─────────────────────────────────────────────────────────────────────────────
+
+image:
+  repository: ghcr.io/blerinabombaj/demo-app
+  tag: latest
+  pullPolicy: Always
+
+replicas: 1
+
+# Exercise 3: to introduce drift, run this command in your terminal (do NOT push):
+#   kubectl patch deployment demo-app -n demo -p '{"spec":{"replicas":5}}'
+# ArgoCD will detect the cluster state differs from this file (replicas: 1)
+# and reconcile it back within ~3 minutes automatically.
+# Watch it in the ArgoCD UI under the demo-app application → sync status.
